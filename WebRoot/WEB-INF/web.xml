@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  <display-name></display-name>
+  <servlet>
+    <servlet-name>servletAsk</servlet-name>
+    <servlet-class>com.servlet.servletAsk</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>servletSay</servlet-name>
+    <servlet-class>com.servlet.servletSay</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>servletGetNew</servlet-name>
+    <servlet-class>com.servlet.servletGetNew</servlet-class>
+  </servlet>
+
+
+
+
+  <servlet-mapping>
+    <servlet-name>servletAsk</servlet-name>
+    <url-pattern>/servlet/servletAsk</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>servletSay</servlet-name>
+    <url-pattern>/servlet/servletSay</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>servletGetNew</servlet-name>
+    <url-pattern>/servlet/servletGetNew</url-pattern>
+  </servlet-mapping>	
+  <welcome-file-list>
+    <welcome-file>chatRoom.html</welcome-file>
+  </welcome-file-list>
+</web-app>

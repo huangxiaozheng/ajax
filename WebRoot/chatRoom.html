@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>聊天室</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/index.css" />
+   	<script type="text/javascript" src="script/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="script/dateFormate.js"></script>
+	<script type="text/javascript">
+		$(function(){
+		    
+		    
+		    //用于保存聊天记录的Id值，初始值为0，可获取所有的聊天记录
+		    var finalMessageId = 0;
+		    //声明一个函数，询问服务器端是否存在新的聊天记录
+		    askNewInfo();
+		    function askNewInfo(){
+		    	$.post("/chatRoom/servlet/servletAsk",{"finalMessageId":finalMessageId},function(hasNew){
+		    		//alert(hasNew);
+		    		//这里hasNew是字符串不是布尔值(需要加双引号，数据库的数据才会过来)，所以需要直接设置成==true
+		    		if(hasNew == "true"){
+		    			//若是条件成立则有新的聊天记录----给服务器端发送请求。获取最新的聊天记录
+		    			getNew();
+		    		}
+		    	},"text");
+		    	
+		    	//注意：一定要使用函数的引用，不能加()
+		    	setTimeout(askNewInfo,1000);
+		    }
+		    
+		     //声明一个函数，获取新的聊天记录
+		     function getNew(){
+		     	var $showMessage = $("#showMessage");
+		     	$.post("/chatRoom/servlet/servletGetNew",{"finalMessageId":finalMessageId},function(newMessage){
+		     		//获取到的信息是一个json数组
+		     		for(var i = 0 ; i<newMessage.length; i++){
+		     			var messageId = newMessage[i].messageId;
+						var message = newMessage[i].message;
+						var messageTime = newMessage[i].messageTime;
+						messageTime = new Date(messageTime).Format("yyyy年MM月dd日 hh:mm:ss");
+						var htmlStr = "<div>" + messageTime + " " + message + "</div>";
+						//console.log(htmlStr);
+						//将数据库的数据显示到div中
+						$showMessage.append(htmlStr);
+						//把最新的记录拿回来后，将最新的ID信息给finalMessageId，再次去取数据时就不需要获取全部的
+						finalMessageId = messageId;
+		     		}
+		     		//获取#showMessage对应的DOM对象，通过scrollTop属性设置滚动条的显示位置
+					$showMessage[0].scrollTop = 10000;
+		     	},"json");
+		     }
+		    
+			//按下回车键时，发送聊天消息---获取发送键的ASCII码
+			$("#sendMessage").keypress(function(event){
+				//alert(event.keyCode);
+				if(event.keyCode == 13){
+					//获取聊天消息
+					var message =$.trim(this.value);
+					//alert(message);
+					
+					//将聊天内容发送到服务器端
+					$.post("/chatRoom/servlet/servletSay",{"message":message});
+					
+					//消息发送出去后，清空多行文本框
+					this.value = "";
+					
+					getNew();
+				}
+			});
+		
+		});
+		
+	</script>
+   
+
+  </head>
+  
+  <body>
+    	<div id="chatBox">
+  			<img src="img/chatRoom.png"/>
+	   		<div id="showMessage"></div>
+	   		<textarea id="sendMessage"></textarea>
+  		</div>
+  </body>
+</html>
